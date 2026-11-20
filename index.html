@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Power BI - Sales Performance Analysis Dashboard</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-6 m-0 font-sans min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Top Bar: Power BI Style Ribbon & Dashboard Title -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-[var(--card-border)] gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
+          <span class="inline-block w-2.5 h-2.5 rounded-sm bg-yellow-500"></span>
+          Power BI Executive Report
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight text-[var(--foreground)] mt-0.5">
+          Sales Performance Analysis Dashboard
+        </h1>
+        <p class="text-xs text-[var(--muted-foreground)]">
+          Live Interactive Prototype &bull; Multi-Dimensional Sales, Profit &amp; Customer Insights
+        </p>
+      </div>
+
+      <!-- Slicers / Interactive Filters -->
+      <div class="flex flex-wrap items-center gap-3 bg-[var(--card)] p-2.5 rounded-lg border border-[var(--card-border)] shadow-sm">
+        <div>
+          <label class="block text-[10px] font-medium text-[var(--muted-foreground)] mb-0.5">Fiscal Year</label>
+          <select id="filter-year" onchange="applyFilters()" class="text-xs rounded border border-[var(--card-border)] bg-[var(--background)] text-[var(--foreground)] px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[var(--primary)]">
+            <option value="All">All Years (2023 - 2024)</option>
+            <option value="2024" selected>2024 (Current)</option>
+            <option value="2023">2023 (Prior)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-medium text-[var(--muted-foreground)] mb-0.5">Region</label>
+          <select id="filter-region" onchange="applyFilters()" class="text-xs rounded border border-[var(--card-border)] bg-[var(--background)] text-[var(--foreground)] px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[var(--primary)]">
+            <option value="All" selected>All Regions</option>
+            <option value="North America">North America</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia Pacific">Asia Pacific</option>
+            <option value="Latin America">Latin America</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-medium text-[var(--muted-foreground)] mb-0.5">Customer Segment</label>
+          <select id="filter-segment" onchange="applyFilters()" class="text-xs rounded border border-[var(--card-border)] bg-[var(--background)] text-[var(--foreground)] px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[var(--primary)]">
+            <option value="All" selected>All Segments</option>
+            <option value="Consumer">Consumer</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Home Office">Home Office</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI Metric Cards (Top Summary) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Total Revenue -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-4 shadow-sm hover:border-[var(--primary)] transition-all">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)] mb-1">
+          <span>Total Net Revenue</span>
+          <span class="text-[10px] font-mono bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded">DAX Measure</span>
+        </div>
+        <div id="kpi-revenue" class="text-2xl font-black tracking-tight text-[var(--foreground)]">$742,850</div>
+        <div class="flex items-center gap-1.5 mt-2 text-xs">
+          <span id="kpi-revenue-yoy" class="text-emerald-500 font-semibold flex items-center gap-0.5">
+            &uarr; +18.4%
+          </span>
+          <span class="text-[var(--muted-foreground)] text-[11px]">vs. Prior Period</span>
+        </div>
+      </div>
+
+      <!-- Total Profit & Margin -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-4 shadow-sm hover:border-[var(--primary)] transition-all">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)] mb-1">
+          <span>Total Profit</span>
+          <span id="kpi-margin-badge" class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded">38.2% Margin</span>
+        </div>
+        <div id="kpi-profit" class="text-2xl font-black tracking-tight text-[var(--foreground)]">$283,770</div>
+        <div class="flex items-center gap-1.5 mt-2 text-xs">
+          <span id="kpi-profit-growth" class="text-emerald-500 font-semibold flex items-center gap-0.5">
+            &uarr; +15.1%
+          </span>
+          <span class="text-[var(--muted-foreground)] text-[11px]">Gross margin healthy</span>
+        </div>
+      </div>
+
+      <!-- Total Orders / Volume -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-4 shadow-sm hover:border-[var(--primary)] transition-all">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)] mb-1">
+          <span>Total Orders Placed</span>
+          <span class="text-[10px] text-[var(--muted-foreground)]">Distinct Orders</span>
+        </div>
+        <div id="kpi-orders" class="text-2xl font-black tracking-tight text-[var(--foreground)]">696</div>
+        <div class="flex items-center gap-1.5 mt-2 text-xs">
+          <span id="kpi-units" class="text-[var(--foreground)] font-medium">1,948 units sold</span>
+          <span class="text-[var(--muted-foreground)] text-[11px]">&bull; 2.8 units/order</span>
+        </div>
+      </div>
+
+      <!-- Average Order Value (AOV) -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-4 shadow-sm hover:border-[var(--primary)] transition-all">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)] mb-1">
+          <span>Avg Order Value (AOV)</span>
+          <span class="text-[10px] text-[var(--muted-foreground)]">Revenue / Orders</span>
+        </div>
+        <div id="kpi-aov" class="text-2xl font-black tracking-tight text-[var(--foreground)]">$1,067.31</div>
+        <div class="flex items-center gap-1.5 mt-2 text-xs">
+          <span class="text-emerald-500 font-semibold flex items-center gap-0.5">&uarr; +4.2%</span>
+          <span class="text-[var(--muted-foreground)] text-[11px]">basket expansion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 2: Sales & Profit Trend (Left) + Regional Performance (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Visual 1: Monthly & Yearly Sales Trends (Span 2) -->
+      <div class="lg:col-span-2 bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-sm font-bold text-[var(--foreground)]">Monthly Sales &amp; Profit Trends</h2>
+            <p class="text-[11px] text-[var(--muted-foreground)]">Visual: Combo Clustered Column &amp; Line Chart</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-blue-500 inline-block"></span> Revenue ($)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-emerald-500 inline-block"></span> Profit ($)</span>
+          </div>
+        </div>
+
+        <!-- SVG Trend Chart -->
+        <div class="w-full h-64 relative flex items-end">
+          <svg id="trend-chart-svg" class="w-full h-full overflow-visible" viewBox="0 0 700 240" preserveAspectRatio="none">
+            <!-- Dynamic elements injected by JS -->
+          </svg>
+        </div>
+        <div class="flex justify-between text-[11px] text-[var(--muted-foreground)] pt-2 border-t border-[var(--card-border)] mt-2" id="trend-month-labels">
+          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+          <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+        </div>
+      </div>
+
+      <!-- Visual 3: Regional Sales Performance (Span 1) -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-sm font-bold text-[var(--foreground)]">Regional Performance</h2>
+              <p class="text-[11px] text-[var(--muted-foreground)]">Revenue contribution by geographic territory</p>
+            </div>
+            <span class="text-[10px] bg-slate-500/10 text-[var(--muted-foreground)] px-2 py-0.5 rounded font-mono">DimRegion</span>
+          </div>
+          <div id="regional-bars" class="space-y-3.5 mt-2">
+            <!-- Injected dynamically by JS -->
+          </div>
+        </div>
+        
+        <div class="pt-4 border-t border-[var(--card-border)] text-[11px] text-[var(--muted-foreground)] flex justify-between items-center">
+          <span>Top Contributing Region:</span>
+          <span id="top-region-text" class="font-bold text-[var(--foreground)]">North America (38%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Top-Selling Products (Left) + Customer Purchasing Patterns (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Visual 2: Top-Selling Products -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-sm font-bold text-[var(--foreground)]">Top-Selling Products by Revenue</h2>
+            <p class="text-[11px] text-[var(--muted-foreground)]">Ranked by Net Sales and Profit Margin</p>
+          </div>
+          <span class="text-[10px] bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded font-mono">Top N Filter</span>
+        </div>
+
+        <div id="product-list" class="space-y-3">
+          <!-- Injected dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- Visual 4: Customer Purchasing Patterns -->
+      <div class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-sm font-bold text-[var(--foreground)]">Customer Purchasing Patterns</h2>
+              <p class="text-[11px] text-[var(--muted-foreground)]">Segment behavior, basket size, and order value</p>
+            </div>
+            <span class="text-[10px] bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded font-mono">DimCustomer</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+            <div class="p-3 bg-[var(--background)] rounded-lg border border-[var(--card-border)]">
+              <span class="block text-[11px] text-[var(--muted-foreground)]">Repeat Buyer Rate</span>
+              <span id="cust-repeat-rate" class="text-lg font-bold text-[var(--foreground)]">68.4%</span>
+            </div>
+            <div class="p-3 bg-[var(--background)] rounded-lg border border-[var(--card-border)]">
+              <span class="block text-[11px] text-[var(--muted-foreground)]">Avg Basket Quantity</span>
+              <span id="cust-avg-units" class="text-lg font-bold text-[var(--foreground)]">2.8 units</span>
+            </div>
+            <div class="p-3 bg-[var(--background)] rounded-lg border border-[var(--card-border)]">
+              <span class="block text-[11px] text-[var(--muted-foreground)]">Discount Sensitivity</span>
+              <span id="cust-avg-disc" class="text-lg font-bold text-[var(--foreground)]">6.2%</span>
+            </div>
+          </div>
+
+          <div id="segment-breakdown" class="space-y-3">
+            <!-- Dynamic customer segment comparisons -->
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-[var(--background)] rounded-lg border border-[var(--card-border)] flex items-center justify-between text-xs">
+          <span class="text-[var(--muted-foreground)]">Primary Growth Driver:</span>
+          <span class="font-semibold text-emerald-500">Corporate Bulk Purchases (42% of revenue)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Power BI Model & DAX Quick Reference Footer -->
+    <footer class="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-4 text-xs text-[var(--muted-foreground)] space-y-2">
+      <div class="flex items-center justify-between font-semibold text-[var(--foreground)]">
+        <span>Power BI DAX Formulas Used in this Model</span>
+        <span class="text-[10px] text-blue-500 font-mono">Star Schema: FactSales &harr; DimDate, DimProduct, DimCustomer, DimRegion</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-[11px] pt-1">
+        <div class="bg-[var(--background)] p-2 rounded border border-[var(--card-border)]">
+          <span class="text-[var(--primary)] font-bold">Total Revenue =</span><br>
+          SUMX(FactSales, FactSales[Quantity] * FactSales[UnitPrice] * (1 - FactSales[Discount]))
+        </div>
+        <div class="bg-[var(--background)] p-2 rounded border border-[var(--card-border)]">
+          <span class="text-[var(--primary)] font-bold">Total Profit =</span><br>
+          [Total Revenue] - SUMX(FactSales, FactSales[Quantity] * FactSales[UnitCost])
+        </div>
+        <div class="bg-[var(--background)] p-2 rounded border border-[var(--card-border)]">
+          <span class="text-[var(--primary)] font-bold">Profit Margin % =</span><br>
+          DIVIDE([Total Profit], [Total Revenue], 0)
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Data structures for interactive simulation
+    const dataset = {
+      "2024": {
+        revenue: 742850,
+        profit: 283770,
+        orders: 696,
+        units: 1948,
+        yoyRev: "+18.4%",
+        yoyProf: "+15.1%",
+        monthly: [
+          { m: "Jan", rev: 48000, prof: 18200 },
+          { m: "Feb", rev: 52000, prof: 20100 },
+          { m: "Mar", rev: 61000, prof: 23400 },
+          { m: "Apr", rev: 58000, prof: 21900 },
+          { m: "May", rev: 64000, prof: 24800 },
+          { m: "Jun", rev: 69000, prof: 26500 },
+          { m: "Jul", rev: 62000, prof: 23600 },
+          { m: "Aug", rev: 66000, prof: 25100 },
+          { m: "Sep", rev: 71000, prof: 27400 },
+          { m: "Oct", rev: 74000, prof: 28500 },
+          { m: "Nov", rev: 82000, prof: 31200 },
+          { m: "Dec", rev: 86850, prof: 33070 }
+        ],
+        regions: [
+          { name: "North America", pct: 39, rev: "$289,710", color: "bg-blue-500" },
+          { name: "Europe", pct: 28, rev: "$208,000", color: "bg-indigo-500" },
+          { name: "Asia Pacific", pct: 22, rev: "$163,420", color: "bg-teal-500" },
+          { name: "Latin America", pct: 11, rev: "$81,720", color: "bg-amber-500" }
+        ],
+        products: [
+          { name: "UltraBook Pro 15", rev: "$218,400", share: 88, margin: "37.5%", cat: "Technology" },
+          { name: "Motorized Standing Desk", rev: "$142,560", share: 62, margin: "45.8%", cat: "Furniture" },
+          { name: "Smart 4K Monitor 27\"", rev: "$114,240", share: 50, margin: "43.7%", cat: "Technology" },
+          { name: "Executive Leather Armchair", rev: "$98,420", share: 42, margin: "50.0%", cat: "Furniture" },
+          { name: "Wireless Noise-Canceling Audio", rev: "$72,180", share: 32, margin: "52.7%", cat: "Technology" }
+        ],
+        segments: [
+          { name: "Corporate", pct: 45, aov: "$1,850", orders: 210, desc: "High basket volume & multi-device bundles" },
+          { name: "Consumer", pct: 38, aov: "$620", orders: 360, desc: "Frequent single unit purchases" },
+          { name: "Home Office", pct: 17, aov: "$980", orders: 126, desc: "Dual monitor & ergonomic workstation upgrades" }
+        ]
+      },
+      "2023": {
+        revenue: 627150,
+        profit: 246500,
+        orders: 610,
+        units: 1680,
+        yoyRev: "+12.1%",
+        yoyProf: "+9.8%",
+        monthly: [
+          { m: "Jan", rev: 41000, prof: 16100 },
+          { m: "Feb", rev: 43000, prof: 16900 },
+          { m: "Mar", rev: 49000, prof: 19300 },
+          { m: "Apr", rev: 48000, prof: 18800 },
+          { m: "May", rev: 51000, prof: 20000 },
+          { m: "Jun", rev: 54000, prof: 21200 },
+          { m: "Jul", rev: 52000, prof: 20400 },
+          { m: "Aug", rev: 55000, prof: 21600 },
+          { m: "Sep", rev: 58000, prof: 22800 },
+          { m: "Oct", rev: 61000, prof: 24000 },
+          { m: "Nov", rev: 66000, prof: 25900 },
+          { m: "Dec", rev: 69150, prof: 27100 }
+        ],
+        regions: [
+          { name: "North America", pct: 41, rev: "$257,130", color: "bg-blue-500" },
+          { name: "Europe", pct: 27, rev: "$169,330", color: "bg-indigo-500" },
+          { name: "Asia Pacific", pct: 20, rev: "$125,430", color: "bg-teal-500" },
+          { name: "Latin America", pct: 12, rev: "$75,260", color: "bg-amber-500" }
+        ],
+        products: [
+          { name: "UltraBook Pro 15", rev: "$182,000", share: 82, margin: "37.5%", cat: "Technology" },
+          { name: "Motorized Standing Desk", rev: "$118,000", share: 57, margin: "45.8%", cat: "Furniture" },
+          { name: "Smart 4K Monitor 27\"", rev: "$96,000", share: 46, margin: "43.7%", cat: "Technology" },
+          { name: "Executive Leather Armchair", rev: "$84,000", share: 39, margin: "50.0%", cat: "Furniture" },
+          { name: "Wireless Noise-Canceling Audio", rev: "$62,000", share: 29, margin: "52.7%", cat: "Technology" }
+        ],
+        segments: [
+          { name: "Corporate", pct: 42, aov: "$1,680", orders: 185, desc: "Bulk corporate hardware procurement" },
+          { name: "Consumer", pct: 41, aov: "$590", orders: 325, desc: "Retail direct consumers" },
+          { name: "Home Office", pct: 17, aov: "$920", orders: 100, desc: "Remote work stipends" }
+        ]
+      }
+    };
+
+    function applyFilters() {
+      const year = document.getElementById("filter-year").value;
+      const regFilter = document.getElementById("filter-region").value;
+      const segFilter = document.getElementById("filter-segment").value;
+      
+      let baseData = (year === "2023") ? dataset["2023"] : dataset["2024"];
+      if (year === "All") {
+        baseData = {
+          revenue: dataset["2023"].revenue + dataset["2024"].revenue,
+          profit: dataset["2023"].profit + dataset["2024"].profit,
+          orders: dataset["2023"].orders + dataset["2024"].orders,
+          units: dataset["2023"].units + dataset["2024"].units,
+          yoyRev: "+15.3% 2-Yr CAGR",
+          yoyProf: "+12.5%",
+          monthly: dataset["2024"].monthly.map((m, idx) => ({
+            m: m.m,
+            rev: m.rev + dataset["2023"].monthly[idx].rev,
+            prof: m.prof + dataset["2023"].monthly[idx].prof
+          })),
+          regions: dataset["2024"].regions,
+          products: dataset["2024"].products,
+          segments: dataset["2024"].segments
+        };
+      }
+
+      // Calculate multiplier for filters
+      let mult = 1.0;
+      if (regFilter !== "All") mult *= 0.35;
+      if (segFilter !== "All") mult *= 0.45;
+
+      const currRev = Math.round(baseData.revenue * mult);
+      const currProf = Math.round(baseData.profit * mult);
+      const currOrders = Math.round(baseData.orders * mult);
+      const currUnits = Math.round(baseData.units * mult);
+      const currMargin = ((currProf / currRev) * 100).toFixed(1);
+      const currAov = (currRev / currOrders).toFixed(2);
+
+      // Update KPI Cards
+      document.getElementById("kpi-revenue").textContent = "$" + currRev.toLocaleString();
+      document.getElementById("kpi-profit").textContent = "$" + currProf.toLocaleString();
+      document.getElementById("kpi-margin-badge").textContent = currMargin + "% Margin";
+      document.getElementById("kpi-orders").textContent = currOrders.toLocaleString();
+      document.getElementById("kpi-units").textContent = currUnits.toLocaleString() + " units sold";
+      document.getElementById("kpi-aov").textContent = "$" + parseFloat(currAov).toLocaleString();
+      document.getElementById("kpi-revenue-yoy").textContent = baseData.yoyRev;
+
+      // Render Trend SVG Chart
+      renderTrendChart(baseData.monthly, mult);
+
+      // Render Regional Performance
+      renderRegions(baseData.regions, regFilter);
+
+      // Render Products
+      renderProducts(baseData.products);
+
+      // Render Customer Purchasing Patterns
+      renderCustomerPatterns(baseData.segments, segFilter);
+    }
+
+    function renderTrendChart(monthly, mult) {
+      const svg = document.getElementById("trend-chart-svg");
+      svg.innerHTML = "";
+
+      const maxRev = Math.max(...monthly.map(d => d.rev * mult)) * 1.15;
+      const chartWidth = 700;
+      const chartHeight = 210;
+      const colWidth = 28;
+      const step = chartWidth / monthly.length;
+
+      // Draw Gridlines
+      for (let g = 1; g <= 3; g++) {
+        const y = chartHeight - (chartHeight / 4) * g;
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", "0");
+        line.setAttribute("x2", "700");
+        line.setAttribute("y1", y);
+        line.setAttribute("y2", y);
+        line.setAttribute("stroke", "currentColor");
+        line.setAttribute("stroke-opacity", "0.08");
+        line.setAttribute("stroke-dasharray", "4");
+        svg.appendChild(line);
+      }
+
+      let profitPoints = [];
+
+      monthly.forEach((d, idx) => {
+        const revVal = d.rev * mult;
+        const profVal = d.prof * mult;
+
+        const colHeight = (revVal / maxRev) * chartHeight;
+        const x = idx * step + (step - colWidth) / 2;
+        const y = chartHeight - colHeight;
+
+        // Column Bar (Revenue)
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", colWidth);
+        rect.setAttribute("height", colHeight);
+        rect.setAttribute("rx", "3");
+        rect.setAttribute("fill", "#3b82f6");
+        rect.setAttribute("fill-opacity", "0.85");
+        
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = `${d.m}: Revenue $${Math.round(revVal).toLocaleString()} | Profit $${Math.round(profVal).toLocaleString()}`;
+        rect.appendChild(title);
+        svg.appendChild(rect);
+
+        // Profit line coordinate
+        const lineY = chartHeight - ((profVal * 2.2) / maxRev) * chartHeight;
+        profitPoints.push(`${x + colWidth / 2},${lineY}`);
+      });
+
+      // Profit Polyline
+      const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      polyline.setAttribute("points", profitPoints.join(" "));
+      polyline.setAttribute("fill", "none");
+      polyline.setAttribute("stroke", "#10b981");
+      polyline.setAttribute("stroke-width", "3");
+      polyline.setAttribute("stroke-linecap", "round");
+      polyline.setAttribute("stroke-linejoin", "round");
+      svg.appendChild(polyline);
+
+      // Profit Points Dots
+      profitPoints.forEach((pt) => {
+        const [px, py] = pt.split(",");
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", px);
+        circle.setAttribute("cy", py);
+        circle.setAttribute("r", "4");
+        circle.setAttribute("fill", "#10b981");
+        circle.setAttribute("stroke", "var(--card)");
+        circle.setAttribute("stroke-width", "2");
+        svg.appendChild(circle);
+      });
+    }
+
+    function renderRegions(regions, filter) {
+      const container = document.getElementById("regional-bars");
+      container.innerHTML = "";
+      regions.forEach(r => {
+        const isSelected = (filter === "All" || filter === r.name);
+        const opacity = isSelected ? "opacity-100" : "opacity-40";
+        container.innerHTML += `
+          <div class="space-y-1 ${opacity} transition-opacity">
+            <div class="flex justify-between text-xs font-medium">
+              <span class="text-[var(--foreground)]">${r.name}</span>
+              <span class="text-[var(--muted-foreground)] font-mono">${r.rev} (${r.pct}%)</span>
+            </div>
+            <div class="w-full bg-[var(--background)] h-2.5 rounded-full overflow-hidden border border-[var(--card-border)]">
+              <div class="${r.color} h-full rounded-full transition-all duration-500" style="width: ${r.pct}%"></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderProducts(products) {
+      const container = document.getElementById("product-list");
+      container.innerHTML = "";
+      products.forEach((p, idx) => {
+        container.innerHTML += `
+          <div class="p-2.5 rounded-lg bg-[var(--background)] border border-[var(--card-border)] flex items-center justify-between hover:border-[var(--primary)] transition-all">
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-xs font-bold w-5 h-5 flex items-center justify-center rounded bg-slate-500/10 text-[var(--muted-foreground)]">#${idx + 1}</span>
+              <div>
+                <div class="text-xs font-semibold text-[var(--foreground)]">${p.name}</div>
+                <div class="text-[10px] text-[var(--muted-foreground)]">${p.cat} &bull; Margin: <span class="text-emerald-500 font-semibold">${p.margin}</span></div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-bold font-mono text-[var(--foreground)]">${p.rev}</div>
+              <div class="w-16 bg-blue-500/10 h-1.5 rounded-full overflow-hidden mt-1 ml-auto">
+                <div class="bg-blue-500 h-full rounded-full" style="width: ${p.share}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderCustomerPatterns(segments, filter) {
+      const container = document.getElementById("segment-breakdown");
+      container.innerHTML = "";
+      segments.forEach(s => {
+        const isSelected = (filter === "All" || filter === s.name);
+        const opacity = isSelected ? "opacity-100 ring-1 ring-[var(--primary)]" : "opacity-50";
+        container.innerHTML += `
+          <div class="p-3 bg-[var(--background)] rounded-lg border border-[var(--card-border)] ${opacity} transition-all space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-[var(--foreground)]">${s.name} Segment</span>
+              <span class="font-mono text-[11px] text-[var(--primary)]">${s.pct}% of Revenue</span>
+            </div>
+            <p class="text-[10px] text-[var(--muted-foreground)]">${s.desc}</p>
+            <div class="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-[var(--card-border)] text-[var(--muted-foreground)]">
+              <span>Avg Basket: <strong class="text-[var(--foreground)]">${s.aov}</strong></span>
+              <span>Orders: <strong class="text-[var(--foreground)]">${s.orders}</strong></span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Initial render
+    window.addEventListener("DOMContentLoaded", () => {
+      applyFilters();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+CustomerID,CustomerName,Segment,LoyaltyTier
+CUST001,Alice Cooper,Consumer,Gold
+CUST002,Bob Smith,Consumer,Silver
+CUST003,Charlie Brown,Consumer,Gold
+CUST004,Diana Prince,Consumer,Silver
+CUST005,Evan Wright,Consumer,Platinum
+CUST006,Fiona Gallagher,Consumer,Platinum
+CUST007,George Clark,Consumer,Platinum
+CUST008,Hannah Abbott,Consumer,Platinum
+CUST009,Ian Malcolm,Consumer,Silver
+CUST010,Julia Roberts,Consumer,Silver
+CUST011,Kevin Bacon,Consumer,Platinum
+CUST012,Laura Croft,Consumer,Silver
+CUST013,Michael Scott,Home Office,Platinum
+CUST014,Nora Jones,Home Office,Platinum
+CUST015,Oscar Martinez,Home Office,Platinum
+CUST016,Pam Beesly,Home Office,Silver
+CUST017,Quentin Tarantino,Home Office,Platinum
+CUST018,Rachel Green,Home Office,Platinum
+CUST019,Steve Rogers,Home Office,Silver
+CUST020,Tony Stark,Home Office,Gold
+CUST021,Apex Tech Solutions,Corporate,Platinum
+CUST022,Nexus Global Corp,Corporate,Standard
+CUST023,Vanguard Logistics,Corporate,Gold
+CUST024,BlueSky Enterprises,Corporate,Standard
+CUST025,Horizon Media,Corporate,Standard

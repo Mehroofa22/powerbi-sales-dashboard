@@ -1,0 +1,11 @@
+ProductID,ProductName,Category,SubCategory,UnitCost,BasePrice
+P101,UltraBook Pro 15,Technology,Laptops,750.0,1200.0
+P102,Wireless Noise-Canceling Headphones,Technology,Audio,85.0,180.0
+P103,"Smart 4K Monitor 27""",Technology,Displays,180.0,320.0
+P104,Ergonomic Mesh Chair,Furniture,Seating,120.0,250.0
+P105,Motorized Standing Desk,Furniture,Desks,260.0,480.0
+P106,Executive Leather Armchair,Furniture,Seating,190.0,380.0
+P107,Heavy-Duty Paper Shredder,Office Supplies,Equipment,45.0,95.0
+P108,Premium Multi-Color Gel Pens (Box),Office Supplies,Writing,6.5,18.0
+P109,Recycled Copy Paper Case,Office Supplies,Paper,18.0,36.0
+P110,Wireless Laser Pointer Presenter,Technology,Accessories,15.0,45.0
